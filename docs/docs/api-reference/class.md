@@ -36,7 +36,6 @@ This class extends [`EventEmitter`](https://nodejs.org/api/events.html) from Nod
     :::info
     The default `idleTimeout` can lead to some performance loss in the application because of the overhead involved with stopping and starting new worker threads. To improve performance, try setting the `idleTimeout` explicitly.
     :::
-
   - `maxQueue`: (`number` | `string`) The maximum number of tasks that may be
     scheduled to run, but not yet running due to lack of available threads, at
     a given time. By default, there is no limit. The special value `'auto'`
@@ -91,6 +90,9 @@ This class extends [`EventEmitter`](https://nodejs.org/api/events.html) from Nod
     complete all in-flight tasks when `close()` is called. The default is `30000`
   - `recordTiming`: (`boolean`) By default, run and wait time will be recorded
     for the pool. To disable, set to `false`.
+  - `workerHistogram`: (`boolean`) By default `false`. It will hint the Worker pool to record statistics for each individual Worker
+  - `loadBalancer`: ([`PiscinaLoadBalancer`](#piscinaloadbalancer)) By default, Piscina uses a least-busy algorithm. The `loadBalancer`
+    option can be used to provide an alternative implementation. See [Custom Load Balancers](../advanced-topics/loadbalancer.mdx) for additional detail.
 
 :::caution
 Use caution when setting resource limits. Setting limits that are too low may

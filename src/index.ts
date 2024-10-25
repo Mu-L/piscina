@@ -34,9 +34,9 @@ import {
 import {
   WorkerInfo,
   AsynchronouslyCreatedResourcePool,
-  PiscinaTaskBalancer,
+  PiscinaLoadBalancer,
   PiscinaWorker,
-  ResourceBasedBalancer
+  LeastBusyBalancer
 } from './worker_pool';
 import {
   AbortSignalAny,
@@ -76,7 +76,7 @@ interface Options {
   trackUnmanagedFds? : boolean,
   closeTimeout?: number,
   recordTiming?: boolean,
-  loadBalancer?: PiscinaTaskBalancer,
+  loadBalancer?: PiscinaLoadBalancer,
   workerHistogram?: boolean,
 }
 
@@ -181,7 +181,7 @@ class ThreadPool {
   workerFailsDuringBootstrap : boolean = false;
   destroying : boolean = false;
   maxCapacity: number;
-  balancer: PiscinaTaskBalancer;
+  balancer: PiscinaLoadBalancer;
 
   constructor (publicInterface : Piscina, options : Options) {
     this.publicInterface = publicInterface;
@@ -211,7 +211,7 @@ class ThreadPool {
       this.options.maxQueue = options.maxQueue ?? kDefaultOptions.maxQueue;
     }
 
-    this.balancer = this.options.loadBalancer ?? ResourceBasedBalancer({ maximumUsage: this.options.concurrentTasksPerWorker });
+    this.balancer = this.options.loadBalancer ?? LeastBusyBalancer({ maximumUsage: this.options.concurrentTasksPerWorker });
     this.workers = new AsynchronouslyCreatedResourcePool<WorkerInfo>(
       this.options.concurrentTasksPerWorker);
     this.workers.onTaskDone((w : WorkerInfo) => this._onWorkerTaskDone(w));
